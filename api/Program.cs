@@ -3,6 +3,9 @@ using api.Interfaces;
 using api.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using api.Service;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +24,37 @@ builder.Services.AddDbContext<ApplicationDBContext>(options => {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")); 
 });
 
+builder.Services.AddIdentity<AppUser,IdentityRole>(options => {
+    options.Password.RequiredDigit = true;
+    options.Password.RequireLowerCase = true;
+    options.Password.RequireUpperCase = true;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.REquiredLength = 12;
+})
+ .AddEntityFrameworkStores<ApplicationDbContext>();
+ 
+
+ // add scheme
+
+ builder.Services.AddAuthentication(options =>{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultForbidScheme = 
+    options.DefaultScheme = 
+    options.DefaultSignInScheme = 
+    options.DefaultSignOutScheme = JwtBearerDefaults.AuthenticationScheme;
+ }).AddJwtBearer(options =>{
+    options.TokenValidationParameters = new TokenValidationParameters{
+        ValidateIssuer = true;
+        ValidIssuer = builder.Configuration["JWT:Issuer"],
+        ValidateAudience = true;
+        ValidAudience = builder.Configuration["JWT:Audience"],
+        ValidateSigningKey = true;
+        IssuerSigningKey = new SymmetricSecurityKey(
+            System.Text.Encoding.UTF8.GetBytes(builder.Configuration("JWT:SigningKey"))
+        )
+    }
+ });
 
 builder.Services.AddScoped<IStockRepository, StockRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
@@ -35,6 +69,41 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
+
+app.UseAuthorization();
+
 app.MapControllers();
 
 app.Run();
+
+
+
+// // Add services to the container.
+// // For Entity Framework
+// builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("ConnStr")));
+// // For Identity
+// builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+//     .AddEntityFrameworkStores<ApplicationDbContext>()
+//     .AddDefaultTokenProviders();
+// // Adding Authentication
+// builder.Services.AddAuthentication(options =>
+// {
+//     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+//     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+//     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+// })
+// // Adding Jwt Bearer
+// .AddJwtBearer(options =>
+// {
+//     options.SaveToken = true;
+//     options.RequireHttpsMetadata = false;
+//     options.TokenValidationParameters = new TokenValidationParameters()
+//     {
+//         ValidateIssuer = true,
+//         ValidateAudience = true,
+//         ValidAudience = configuration["JWT:ValidAudience"],
+//         ValidIssuer = configuration["JWT:ValidIssuer"],
+//         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]))
+//     };
+// });

@@ -14,10 +14,37 @@ namespace api.Controllers
     {
         private readonly UserManager<AppUSer> _userManager
         private readonly ITokenService _tokenservice
-        public AccountController(UserManager<AppUser>  userManager, ITokenService tokenservice)
+
+        private readonly SigningManager _signingManager
+        public AccountController(UserManager<AppUser>  userManager, ITokenService tokenservice, SigningManager<AppUser> signingManager)
         {
             _userManager = userManager;
             _tokenservice = tokenservice;
+            _signingManager = signingManager;
+        }
+
+        
+        [HttpPost("login")]
+
+        public async Task<IActionResult> Login([FromBody] LoginDto loginDto) {
+
+            if(!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+                var user = await _userManager.Users.FirstOrDefault(x=> x.UserName == loginDto.UserName.Lower());
+
+                if(user == null) return Unauthorized("Invalid username!");
+
+                var result = await _signingManager.CheckPassowrdSignInAsync(user, loginDto.Password, false);
+            
+                if(!result.Sucessed) return Unauthorized("UserName not found and/or pw incorrect");
+
+                return Ok(new NewUserDto {
+                    UserName =  user.UserName;
+                    Email =  user.Email;
+                    Token =  _tokenservice.CreateToken(user);
+                })
+            
         }
 
         [HttpPost("register")]

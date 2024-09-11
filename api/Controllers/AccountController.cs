@@ -13,9 +13,11 @@ namespace api.Controllers
     public class AccountController : ControllerBase
     {
         private readonly UserManager<AppUSer> _userManager
-        public AccountController(UserManager<AppUser>  userManager)
+        private readonly ITokenService _tokenservice
+        public AccountController(UserManager<AppUser>  userManager, ITokenService tokenservice)
         {
             _userManager = userManager;
+            _tokenservice = tokenservice;
         }
 
         [HttpPost("register")]
@@ -42,7 +44,11 @@ namespace api.Controllers
                     // Anyone that signs through the register end point will be added the User Role
                      if(roleResult.Sucessed){
                     
-                    return Ok("User Created")
+                    return Ok(new NewUserDto {
+                        UserName = appUser.UserName,
+                        Email =  appUser.Email,
+                        Token = _tokenservice.CreateToken(appUser)
+                    })
                 }   else {
                     return StatusCode(500, roleResult.Errors);
                     }

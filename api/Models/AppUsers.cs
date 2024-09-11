@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 
 namespace api.Models
 {
-    public class AppUsers
+    public class AppUsers : IdentityUser
     {
+        // IdentityDbContext<AppUser>
+
         
     }
 }

@@ -17,5 +17,23 @@ namespace api.Data
 
         public DbSet<Stock> Stock {get; set;}
         public DbSet<Comment> Comments {get; set;}
+
+        protected override void OnModelCreating(ModelBuilder builder){
+            base.OnModelCreating(builder)
+            List<IdentityRole> roles = new List<IdentityRole>
+
+            new IdentityRole  {
+                Name = "Admin",
+                NormalizedName = "ADMiN"
+
+                // Normalized Name it only means that it is capitalized
+            }, 
+                    new IdentityRole {
+                        Name = "User",
+                        NormalizedName = "USER"
+                    }
+        }
+
+        builder.Entity<IdentityRole>().HasData(roles);
     }
 }

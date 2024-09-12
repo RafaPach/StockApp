@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 
 namespace api.Models
 {
+
+    [Table("Comments")]
     public class Comment
     {
         public int Id { get; set; }

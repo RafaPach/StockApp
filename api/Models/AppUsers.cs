@@ -9,6 +9,8 @@ namespace api.Models
     {
         // IdentityDbContext<AppUser>
 
+        // Many to Many 
+        public List<Portfolio> Porfolios {get; set;} = new List<Portfolio>();
         
     }
 }

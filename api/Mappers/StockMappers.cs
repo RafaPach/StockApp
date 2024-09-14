@@ -31,7 +31,7 @@ namespace api.Mappers
                 return new Stock{
 
                     Symbol = stockDto.Symbol,
-                    Company = stockDto.Company,
+                    Company = stockDto.CompanyName,
                     Purchase = stockDto.Purchase,
                     LastDiv = stockDto.LastDiv,
                     Industry = stockDto.Industry,

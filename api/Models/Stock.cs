@@ -31,6 +31,6 @@ namespace api.Models
 
         //many to many
 
-        public List<Portfolio> Porfolios {get; set;} = new List<Portfolio>();
+        public List<Portfolio> Portfolios {get; set;} = new List<Portfolio>();
     }
 }

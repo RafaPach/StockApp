@@ -19,14 +19,14 @@ namespace api.Controllers
     public class PorfolioController : ControllerBase
     {
 
-        private readonly UserManager<AppUser> _userManager
-        private readonly IStockRepository _stockRepo
-         private readonly IPortfolioRepository _portfolioRepo
+        private readonly UserManager<AppUser> _userManager;
+        private readonly IStockRepository _stockRepo;
+         private readonly IPortfolioRepository _portfolioRepo;
        public PorfolioController(UserManager<AppUser> userManager, IStockRepository stockRepo,  IPortfolioRepository portfolioRepo)
        {
         _userManager = userManager;
         _stockRepo = stockRepo;
-        _portfolioRepo = portfolioRepo
+        _portfolioRepo = portfolioRepo;
 
        }
 
@@ -35,14 +35,12 @@ namespace api.Controllers
 
        public async Task<IActionResult> GetUserPortfolio(){
 
-        var userName = User.GetUser();
+        // User below is being inherited from the COntrollerBase. Whenever we see it , User allows to grab anything that's associated with the User and the Claim.
 
-        // User above is being inherited from the COntrollerBase. Whenever we see it , User allows to grab anything that's associated with the User and the Claim.
-
-        var appUser = await _userManager.FindByNameAsync(username)
-        var userPorfolio = await _portfolioRepo.GetUserPortfolio(appUser);
-
-        return OK(userPorfolio);
+             var username = User.GetUsername();
+            var appUser = await _userManager.FindByNameAsync(username);
+            var userPortfolio = await _portfolioRepo.GetUserPortfolio(appUser);
+            return Ok(userPortfolio);
        }
     }
 }

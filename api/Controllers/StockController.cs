@@ -32,11 +32,11 @@ namespace api.Controllers
 
             var stocks = await _stockRepo.GetAllStocksAsync(query);
             
-            var stockDto = stocks.Select(s=>s.ToStockDto());
+            var stockDto = stocks.Select(s=>s.ToStockDto()).ToList();
 
             // Select works as a map here, so its gonna interate through the list and then its gonna check the dto and get the info according to this DTO
 
-            return Ok(stocks);
+            return Ok(stockDto);
         }
 
         [HttpGet("{id:int}")]

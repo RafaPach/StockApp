@@ -29,7 +29,7 @@ namespace api.Models
 
         public List<Comment> Comments { get; set; } = new List<Comment>();
 
-        //many to many
+        //many to many below
 
         public List<Portfolio> Portfolios {get; set;} = new List<Portfolio>();
     }

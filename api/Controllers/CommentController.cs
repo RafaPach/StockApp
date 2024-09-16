@@ -17,11 +17,15 @@ namespace api.Controllers
     {
         private readonly ICommentRepository _commentRepo;
         private readonly IStockRepository _stockRepo;
+        private readonly UserManager<AppUser> _userManager;
 
-        public CommentController(ICommentRepository commentRepo, IStockRepository stockRepo)
+
+        public CommentController(ICommentRepository commentRepo, IStockRepository stockRepo, UserManager<AppUser> userManager)
         {
             _commentRepo = commentRepo;
             _stockRepo = stockRepo;
+            _userManager = userManager;
+
         }
 
         [HttpGet]   
@@ -61,7 +65,15 @@ namespace api.Controllers
                 return BadRequest("Stock Does not Exist");
             }
 
+            var username = User.GetUserName();
+            // Get user from database 
+            var appUser = await _userManager.FindByNameAsync(username);
+
+
             var commentModel = commentDto.ToCommentFromCreate(stockId);
+            // Add User to the comments objects, to see who commented it 
+            // This will not be added if we do not add Includes in our repository
+            commentModel.AppUserId = appUser.Id;
             
             await _commentRepo.CreateAsync(commentModel);
 

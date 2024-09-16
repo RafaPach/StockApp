@@ -12,10 +12,10 @@ namespace api.Interfaces
     {
         Task<List<Stock>> GetAllStocksAsync(QueryObject query);
         Task<Stock?> GetStockByIdAsync(int id);
+        Task<Stock?> GetBySymbolAsync(string symbol);
         Task<Stock> CreateAsync(Stock stockModel);
         Task<Stock?> UpdateAsync(int id, UpdateStockRequestDto stockModel);
         Task<Stock?> DeleteAsync(int id);
-
         Task<bool> StockExsists(int id);
 
     }
